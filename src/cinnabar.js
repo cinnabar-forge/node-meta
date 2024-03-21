@@ -6,11 +6,11 @@ export default {
   "description": "Configuration editor and version updater",
   "version": {
     "major": 0,
-    "minor": 0,
+    "minor": 1,
     "patch": 0,
-    "revision": 0,
-    "text": "0.0.0",
-    "timestamp": 0
+    "revision": 1,
+    "text": "0.1.0",
+    "timestamp": 1711026835
   },
   "stack": {
     "nodejs": {

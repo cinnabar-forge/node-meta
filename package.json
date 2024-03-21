@@ -1,6 +1,6 @@
 {
   "name": "@cinnabar-forge/meta",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Configuration editor and version updater",
   "repository": {
     "type": "git",
