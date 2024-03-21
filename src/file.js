@@ -48,9 +48,9 @@ export async function handleCinnabarFile(folderPath) {
 
   const mainChoices = [
     { name: "Exit", value: "exit" },
+    { name: "Change node.js package name", value: "changeNodejsPackageName" },
     { name: "Change name", value: "changeName" },
     { name: "Change description", value: "changeDescription" },
-    { name: "Change node.js package name", value: "changeNodejsPackageName" },
     { name: "Update version", value: "updateVersion" },
   ];
 
@@ -120,8 +120,8 @@ export function writeToFiles(folderPath, cinnabarData, newVersion = null) {
 
   if (cinnabarData.stack.nodejs) {
     updateJavascriptFile(folderPath, cinnabarData, newVersion);
-    updatePackageJson(folderPath, newVersion);
-    updatePackageLockJson(folderPath, newVersion);
+    updatePackageJson(folderPath, cinnabarData, newVersion, false);
+    updatePackageJson(folderPath, cinnabarData, newVersion, true);
   }
 }
 
@@ -135,7 +135,9 @@ function updateJavascriptFile(folderPath, cinnabarData, newVersion) {
   const fileName = cinnabarData.stack?.nodejs?.outputFile ?? ["cinnabar.js"];
   const filePath = path.join(folderPath, ...fileName);
 
-  cinnabarData.version = newVersion;
+  if (newVersion != null) {
+    cinnabarData.version = newVersion;
+  }
 
   try {
     fs.writeFileSync(
@@ -153,29 +155,28 @@ function updateJavascriptFile(folderPath, cinnabarData, newVersion) {
  * @param folderPath
  * @param newVersion
  */
-function updatePackageJson(folderPath, newVersion) {
-  const fileName = "package.json";
+function updatePackageJson(folderPath, cinnabarData, newVersion, lock) {
+  const fileName = lock ? "package.json" : "package-lock.json";
   const filePath = path.join(folderPath, fileName);
   try {
     const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-    data.version = newVersion.text;
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
-  } catch (error) {
-    console.error(`Failed to update ${fileName}:`, error.message);
-  }
-}
-
-/**
- *
- * @param folderPath
- * @param newVersion
- */
-function updatePackageLockJson(folderPath, newVersion) {
-  const fileName = "package-lock.json";
-  const filePath = path.join(folderPath, fileName);
-  try {
-    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-    data.version = newVersion.text;
+    if (cinnabarData.stack?.nodejs?.package != null) {
+      data.name = cinnabarData.stack.nodejs.package;
+    }
+    if (cinnabarData.description != null) {
+      data.description = cinnabarData.description;
+    }
+    if (newVersion != null) {
+      data.version = newVersion.text;
+    }
+    if (data.packages?.[""] != null) {
+      if (cinnabarData.stack?.nodejs?.package != null) {
+        data.packages[""].name = cinnabarData.stack.nodejs.package;
+      }
+      if (newVersion != null) {
+        data.packages[""].version = newVersion.text;
+      }
+    }
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
   } catch (error) {
     console.error(`Failed to update ${fileName}:`, error.message);
