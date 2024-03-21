@@ -8,10 +8,15 @@ import { commitChanges } from "./git.js";
  * @param cinnabarData
  */
 export function getFullVersionText(cinnabarData) {
+  const date = new Date(
+    cinnabarData.version?.timestamp
+      ? cinnabarData.version?.timestamp * 1000
+      : 0,
+  ).toISOString();
   if (cinnabarData.stack?.nodejs != null) {
-    return `${cinnabarData.stack.nodejs.package ?? "'new-app'"}@${cinnabarData.version?.text ?? "0.0.0"} from ${new Date(cinnabarData.version?.timestamp ? cinnabarData.version?.timestamp * 1000 : Date.now()).toISOString()}`;
+    return `${cinnabarData.stack.nodejs.package ?? "'new-app'"}@${cinnabarData.version?.text ?? "0.0.0"} from ${date}`;
   }
-  return `${cinnabarData.name ?? "New app"} v${cinnabarData.version?.text ?? "0.0.0"} from ${new Date(cinnabarData.version?.timestamp ? cinnabarData.version?.timestamp * 1000 : Date.now()).toISOString()}`;
+  return `${cinnabarData.name ?? "New app"} v${cinnabarData.version?.text ?? "0.0.0"} from ${date}`;
 }
 
 /**

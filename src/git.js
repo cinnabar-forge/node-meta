@@ -36,7 +36,6 @@ export async function commitChanges(
   });
 
   if (versionType === "back") {
-    await handleCinnabarFile(folderPath);
     return;
   }
 

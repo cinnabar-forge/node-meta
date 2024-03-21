@@ -7,6 +7,8 @@ import path from "path";
 import { getFullVersionText, updateVersion } from "./version.js";
 
 const CINNABAR_FILE = "cinnabar.json";
+const CINNABAR_JAVASCRIPT_FILE = "cinnabar.js";
+const PACKAGE_JSON_FILE = "package.json";
 
 /**
  *
@@ -17,8 +19,18 @@ export async function getCinnabarData(folderPath) {
   let cinnabarData;
 
   try {
-    cinnabarData = JSON.parse(fs.readFileSync(cinnabarPath, "utf8"));
+    if (fs.existsSync(cinnabarPath)) {
+      cinnabarData = JSON.parse(fs.readFileSync(cinnabarPath, "utf8"));
+    } else if (fs.existsSync(path.join(folderPath, "version.json"))) {
+      cinnabarData = getVersionJson(folderPath);
+      // eslint-disable-next-line sonarjs/no-duplicate-string
+    } else if (fs.existsSync(path.join(folderPath, PACKAGE_JSON_FILE))) {
+      cinnabarData = getPackageJson(folderPath);
+    } else {
+      cinnabarData = {};
+    }
   } catch (error) {
+    console.error(error.message);
     cinnabarData = {};
   } finally {
     if (cinnabarData.version == null) {
@@ -40,10 +52,92 @@ export async function getCinnabarData(folderPath) {
 }
 
 /**
+ * Load data from package.json file
+ * @param folderPath
+ */
+async function getPackageJson(folderPath) {
+  const packageJsonPath = path.join(folderPath, PACKAGE_JSON_FILE);
+
+  try {
+    const data = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+
+    const versionSplitted = (data.version ?? "0.0.0")
+      .split(".")
+      .map((value) => parseInt(value));
+
+    return {
+      cinnabarMetaVersion: 1,
+      description: data.description ?? "app",
+      name: data.name ?? "app",
+      stack: {
+        nodejs: {
+          outputFile: fs.existsSync(path.join(folderPath, "src"))
+            ? ["src", CINNABAR_JAVASCRIPT_FILE]
+            : [CINNABAR_JAVASCRIPT_FILE],
+          package: data.name ?? "app",
+        },
+      },
+      version: {
+        major: versionSplitted[0],
+        minor: versionSplitted[1],
+        patch: versionSplitted[2],
+        text: `${versionSplitted[0]}.${versionSplitted[1]}.${versionSplitted[2]}`,
+      },
+    };
+  } catch (error) {
+    return {};
+  }
+}
+
+/**
+ * Load legacy cf-version's version.json file
+ * @param folderPath
+ */
+async function getVersionJson(folderPath) {
+  const versionJsonPath = path.join(folderPath, "version.json");
+
+  try {
+    const data = JSON.parse(fs.readFileSync(versionJsonPath, "utf8"));
+
+    const versionJsonData = await getPackageJson(folderPath);
+
+    const cinnabarData = {
+      cinnabarMetaVersion: 1,
+      description: data.description ?? versionJsonData.description ?? "app",
+      name: data.name ?? "app",
+      version: {
+        major: data.major ?? 0,
+        minor: data.minor ?? 0,
+        patch: data.patch ?? 0,
+        revision: data.revision,
+        text: `${data.major ?? 0}.${data.minor ?? 0}.${data.patch ?? 0}`,
+        timestamp: data.timestamp ?? 0,
+      },
+    };
+
+    if (fs.existsSync(path.join(folderPath, PACKAGE_JSON_FILE))) {
+      cinnabarData.stack = {
+        nodejs: {
+          outputFile: fs.existsSync(path.join(folderPath, "src"))
+            ? ["src", CINNABAR_JAVASCRIPT_FILE]
+            : [CINNABAR_JAVASCRIPT_FILE],
+          package: data.package,
+        },
+      };
+    }
+
+    return cinnabarData;
+  } catch (error) {
+    return {};
+  }
+}
+
+/**
  * Handle the main menu and actions for the cinnabar.json file.
  * @param {string} folderPath - The path to the folder containing the cinnabar.json file.
  */
 export async function handleCinnabarFile(folderPath) {
+  console.log("handleCinnabarFile");
   const cinnabarData = await getCinnabarData(folderPath);
 
   const mainChoices = [
@@ -66,14 +160,17 @@ export async function handleCinnabarFile(folderPath) {
       return;
     case "changeName":
       await handleChange("name", cinnabarData);
+      writeToFiles(folderPath, cinnabarData);
       break;
     case "changeDescription":
       await handleChange("description", cinnabarData);
+      writeToFiles(folderPath, cinnabarData);
       break;
     case "changeNodejsPackageName":
       if (cinnabarData.stack.nodejs == null) {
         cinnabarData.stack.nodejs = {};
       }
+      writeToFiles(folderPath, cinnabarData);
       await handleChange("package", cinnabarData.stack.nodejs);
       break;
     case "updateVersion":
@@ -81,7 +178,6 @@ export async function handleCinnabarFile(folderPath) {
       break;
   }
 
-  writeToFiles(folderPath, cinnabarData);
   handleCinnabarFile(folderPath);
 }
 
@@ -132,7 +228,9 @@ export function writeToFiles(folderPath, cinnabarData, newVersion = null) {
  * @param newVersion
  */
 function updateJavascriptFile(folderPath, cinnabarData, newVersion) {
-  const fileName = cinnabarData.stack?.nodejs?.outputFile ?? ["cinnabar.js"];
+  const fileName = cinnabarData.stack?.nodejs?.outputFile ?? [
+    CINNABAR_JAVASCRIPT_FILE,
+  ];
   const filePath = path.join(folderPath, ...fileName);
 
   if (newVersion != null) {
@@ -153,17 +251,19 @@ function updateJavascriptFile(folderPath, cinnabarData, newVersion) {
 /**
  *
  * @param folderPath
+ * @param cinnabarData
  * @param newVersion
+ * @param lock
  */
 function updatePackageJson(folderPath, cinnabarData, newVersion, lock) {
-  const fileName = lock ? "package.json" : "package-lock.json";
+  const fileName = lock ? "package-lock.json" : PACKAGE_JSON_FILE;
   const filePath = path.join(folderPath, fileName);
   try {
     const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
     if (cinnabarData.stack?.nodejs?.package != null) {
       data.name = cinnabarData.stack.nodejs.package;
     }
-    if (cinnabarData.description != null) {
+    if (cinnabarData.description != null && !lock) {
       data.description = cinnabarData.description;
     }
     if (newVersion != null) {
