@@ -48,6 +48,7 @@ export async function commitChanges(
       .tag([`v${newVersion.text}`]);
   }
   if (gitAction === "push") {
+    await git.push("origin");
     await git.push("origin", "--tags");
   }
 
