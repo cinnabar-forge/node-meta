@@ -35,7 +35,7 @@ export async function commitChanges(
     type: "list",
   });
 
-  if (versionType === "back") {
+  if (gitAction === "back") {
     return;
   }
 

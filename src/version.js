@@ -87,7 +87,6 @@ export async function updateVersion(cinnabarData, folderPath) {
   });
 
   if (versionType === "back") {
-    await handleCinnabarFile(folderPath);
     return;
   }
 

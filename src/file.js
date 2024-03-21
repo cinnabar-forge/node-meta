@@ -137,7 +137,6 @@ async function getVersionJson(folderPath) {
  * @param {string} folderPath - The path to the folder containing the cinnabar.json file.
  */
 export async function handleCinnabarFile(folderPath) {
-  console.log("handleCinnabarFile");
   const cinnabarData = await getCinnabarData(folderPath);
 
   const mainChoices = [
