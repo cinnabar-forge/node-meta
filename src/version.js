@@ -1,6 +1,5 @@
 import inquirer from "inquirer";
 
-import { handleCinnabarFile } from "./file.js";
 import { commitChanges } from "./git.js";
 
 /**
