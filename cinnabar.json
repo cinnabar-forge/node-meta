@@ -1,0 +1,19 @@
+{
+  "cinnabarMetaVersion": 1,
+  "name": "Cinnabar Forge Meta",
+  "description": "Configuration editor and version updater",
+  "version": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0,
+    "revision": 0,
+    "text": "0.0.0",
+    "timestamp": 0
+  },
+  "stack": {
+    "nodejs": {
+      "package": "@cinnabar-forge/meta",
+      "outputFile": ["src", "cinnabar.js"]
+    }
+  }
+}
