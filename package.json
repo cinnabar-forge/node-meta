@@ -1,6 +1,6 @@
 {
   "name": "@cinnabar-forge/meta",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Configuration editor and version updater",
   "keywords": [
     "cli",
