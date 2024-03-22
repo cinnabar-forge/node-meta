@@ -2,6 +2,17 @@
   "name": "@cinnabar-forge/meta",
   "version": "0.1.0",
   "description": "Configuration editor and version updater",
+  "keywords": [
+    "cli",
+    "version-management",
+    "git-integration",
+    "project-configuration",
+    "semver",
+    "interactive-cli",
+    "npm-version",
+    "git-commands",
+    "automation-tools"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cinnabar-forge/node-meta.git"
