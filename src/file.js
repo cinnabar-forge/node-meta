@@ -35,6 +35,7 @@ export async function getCinnabarData(folderPath) {
   } finally {
     if (cinnabarData.version == null) {
       cinnabarData.version = {
+        dev: 0,
         major: 0,
         minor: 0,
         patch: 0,
@@ -78,6 +79,7 @@ async function getPackageJson(folderPath) {
         },
       },
       version: {
+        dev: 0,
         major: versionSplitted[0],
         minor: versionSplitted[1],
         patch: versionSplitted[2],
@@ -106,6 +108,7 @@ async function getVersionJson(folderPath) {
       description: data.description ?? versionJsonData.description ?? "app",
       name: data.name ?? "app",
       version: {
+        dev: 0,
         major: data.major ?? 0,
         minor: data.minor ?? 0,
         patch: data.patch ?? 0,

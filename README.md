@@ -8,7 +8,7 @@ A Node.js CLI tool designed to manage project configurations and versions effici
 
 - Interactive CLI for easy management of project settings.
 - Supports updating project metadata such as name, description, and version.
-- Automated version management including patch, minor, and major updates.
+- Automated version management including dev, patch, minor, and major updates.
 - Git integration for committing changes, tagging versions, and pushing updates.
 
 ## Getting Started
@@ -32,7 +32,7 @@ cinnabar-meta
 #### Updating the project version
 
 - Select `Update version`.
-- Choose the version update type (patch, minor, major).
+- Choose the version update type (dev, patch, minor, major).
 - Confirm update (and, if necessary, commit and push).
 
 ## Contributing
