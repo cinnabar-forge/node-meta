@@ -166,6 +166,9 @@ export async function handleCinnabarFile(folderPath) {
       writeToFiles(folderPath, cinnabarData);
       break;
     case "changeNodejsPackageName":
+      if (cinnabarData.stack == null) {
+        cinnabarData.stack = {};
+      }
       if (cinnabarData.stack.nodejs == null) {
         cinnabarData.stack.nodejs = {};
       }
@@ -213,7 +216,7 @@ export function writeToFiles(folderPath, cinnabarData, newVersion = null) {
     "utf8",
   );
 
-  if (cinnabarData.stack.nodejs) {
+  if (cinnabarData.stack?.nodejs) {
     updateJavascriptFile(folderPath, cinnabarData, newVersion);
     updatePackageJson(folderPath, cinnabarData, newVersion, false);
     updatePackageJson(folderPath, cinnabarData, newVersion, true);
