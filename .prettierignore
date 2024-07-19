@@ -1,7 +1,26 @@
+# General
 **/.git
 **/.svn
 **/.hg
+
+# Binaries
+/bin
+
+# Devcontainer
+.devcontainer
+
+# Node.js
 **/node_modules
 package-lock.json
-src/cinnabar.js
+
+# Distributions
+/build
+/dist
+
+# Cinnabar Meta
+**/cinnabar.js
+**/cinnabar.ts
 cinnabar.json
+
+# Anca
+anca.json

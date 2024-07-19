@@ -1,7 +1,7 @@
 {
   "name": "@cinnabar-forge/meta",
-  "version": "0.1.2",
-  "description": "Configuration editor and version updater",
+  "version": "0.1.2-next.20240719134752",
+  "description": "Version updater",
   "keywords": [
     "cli",
     "version-management",
@@ -24,7 +24,7 @@
     "url": "https://timurrin.github.io"
   },
   "type": "module",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "bin": {
     "cinnabar-meta": "bin/cinnabar-meta.js"
   },
@@ -33,22 +33,33 @@
     "src"
   ],
   "scripts": {
-    "format": "npx prettier . --write",
-    "lint": "npx eslint --fix --ext .js,.json .",
-    "test": "mocha",
-    "verify": "npm run lint && npm run format && npm test"
+    "build": "node esbuild.js",
+    "build:dev": "tsc",
+    "build:sea": "node sea.build.js",
+    "dev": "tsc-watch",
+    "fix": "prettier . --write && eslint --fix .",
+    "format": "prettier . --write",
+    "lint": "eslint --fix .",
+    "test": "prettier . -c && eslint --max-warnings 0 . && tsc && mocha './build/dev/test'"
   },
   "dependencies": {
-    "commander": "12.0.0",
-    "inquirer": "9.2.16",
-    "simple-git": "3.22.0"
+    "clivo": "0.4.0"
   },
   "devDependencies": {
-    "@cinnabar-forge/eslint-plugin": "0.4.0",
-    "chai": "5.1.0",
-    "mocha": "10.3.0"
+    "@cinnabar-forge/eslint-plugin": "0.6.1",
+    "@types/chai": "4.3.16",
+    "@types/mocha": "10.0.7",
+    "@types/node": "20.14.11",
+    "chai": "5.1.1",
+    "esbuild": "0.23.0",
+    "mocha": "10.6.0",
+    "pre-commit": "1.2.2",
+    "typescript": "5.5.3"
   },
   "engines": {
-    "node": ">=11.14.0"
-  }
+    "node": ">=18.0.0"
+  },
+  "pre-commit": [
+    "test"
+  ]
 }

@@ -1,0 +1,38 @@
+{
+  "authors": [
+    {
+      "name": "Timur Moziev",
+      "github": "TimurRin",
+      "email": "timur.moziev@gmail.com",
+      "type": "maintainer",
+      "url": "https://timurrin.github.io/"
+    }
+  ],
+  "cinnabarMeta": {
+    "dataVersion": 0,
+    "version": {
+      "latest": "0.1.2-next.20240719134752",
+      "timestamp": 1721396872
+    },
+    "files": [
+      {
+        "path": "./src/cinnabar.ts",
+        "type": "typescript"
+      }
+    ]
+  },
+  "deployment": {
+    "preparation": [
+      "npm ci",
+      "npm run build"
+    ],
+    "start": [
+      "node ./dist/index.js"
+    ]
+  },
+  "development": {
+    "readme": {}
+  },
+  "type": "app",
+  "stack": "nodejs"
+}
