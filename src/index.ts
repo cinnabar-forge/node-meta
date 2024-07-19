@@ -1,5 +1,10 @@
 import { updateChangelog } from "./changelog.js";
-import { askGithubRepo, askUpdateType, setupCli } from "./cli.js";
+import {
+  askGithubRepo,
+  askPrereleaseTag,
+  askUpdateType,
+  setupCli,
+} from "./cli.js";
 import {
   detectVersionsFromFiles,
   getMetaDataFromFiles,
@@ -66,10 +71,32 @@ async function main() {
   let newVersion;
 
   if (options.interactive) {
-    const updateType = await askUpdateType();
+    const updateType = await askUpdateType(parsedVersion.prerelease != null);
 
-    if (updateType === "build") {
-      build = "yes";
+    switch (updateType) {
+      case "prerelease-update":
+        prerelease = parsedVersion.prerelease;
+        break;
+      case "prerelease-change":
+        prerelease = await askPrereleaseTag();
+        break;
+      case "prerelease-release":
+        prerelease = "yes";
+        break;
+      case "build":
+        build = "yes";
+        break;
+      case "major":
+      case "minor":
+      case "patch":
+        update = updateType;
+        break;
+      case "major-prerelease":
+      case "minor-prerelease":
+      case "patch-prerelease":
+        update = updateType.split("-")[0];
+        prerelease = await askPrereleaseTag();
+        break;
     }
   } else if (
     options.prerelease != null ||
@@ -92,7 +119,15 @@ async function main() {
     return;
   }
 
-  console.log("update", update, "prerelease", prerelease, "build", build);
+  console.log(
+    parsedVersion,
+    "update",
+    update,
+    "prerelease",
+    prerelease,
+    "build",
+    build,
+  );
 
   if (update != null) {
     newVersion = updateVersion(parsedVersion, update, prerelease);

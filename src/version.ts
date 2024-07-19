@@ -70,12 +70,15 @@ export function updateVersion(
  */
 export function updatePrerelease(
   parsedVersion: CinnabarMetaParsedVersion,
-  newPrerelease?: string,
+  newPrerelease: string,
 ): string {
   const { major, minor, patch } = parsedVersion;
   let { prerelease, prereleaseNumber } = parsedVersion;
 
-  if (prerelease != null) {
+  if (newPrerelease === "yes") {
+    prerelease = undefined;
+    prereleaseNumber = undefined;
+  } else if (prerelease != null) {
     if (newPrerelease !== prerelease) {
       prerelease = newPrerelease;
       prereleaseNumber = undefined;
