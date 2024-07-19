@@ -38,6 +38,21 @@ export function checkVersionExistsInGitTags(version: string): boolean {
 }
 
 /**
+ * Gets the most recent git tag.
+ * @returns The most recent git tag as a string.
+ */
+export function getMostRecentGitTag(): string {
+  try {
+    return execSync("git tag --sort=-creatordate | head -n 1")
+      .toString()
+      .trim();
+  } catch (error) {
+    console.error("Error fetching the most recent git tag:", error);
+    return "";
+  }
+}
+
+/**
  *
  * @param push
  */
@@ -53,4 +68,18 @@ export function commitChanges(push: boolean): boolean {
     console.error("Error committing changes:", error);
     return false;
   }
+}
+
+/**
+ * Check if the input is a valid GitHub repository
+ * @param text
+ */
+export function checkGithubRepo(text?: string) {
+  console.log(text);
+  return text != null
+    ? text.includes("/") &&
+        text.split("/").length === 2 &&
+        text.split("/")[0].length > 0 &&
+        text.split("/")[1].length > 0
+    : false;
 }

@@ -1,7 +1,6 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import fs from "fs";
 
-import { CinnabarMeta } from "./types.js";
+import { CinnabarMeta, CinnabarMetaRepo } from "./types.js";
 
 const ANCA_JSON_PATH = "anca.json";
 const CINNABAR_JSON_PATH = "cinnabar.json";
@@ -34,18 +33,28 @@ export function getMetaDataFromFiles(): CinnabarMeta | undefined {
 
 /**
  *
- * @param version
+ * @param oldVersion
+ * @param newVersion
+ * @param isBuild
+ * @param repo
  */
-export function updateMetaDataFiles(version: string): boolean {
-  const updateMeta = (data: CinnabarMeta) => {
+export async function updateMetaDataFiles(
+  oldVersion: string,
+  newVersion: string,
+  isBuild: boolean,
+  repo: CinnabarMetaRepo,
+): Promise<boolean> {
+  const updateMeta = async (data: CinnabarMeta) => {
     data.dataVersion = 0;
     data.version = {
-      latest: version,
+      latest: isBuild ? oldVersion : newVersion,
+      latestNext: isBuild ? newVersion : undefined,
       timestamp: Math.floor(Date.now() / 1000),
     };
     if (data.files == null) {
       data.files = [];
     }
+    data.repo = repo;
   };
 
   let success = false;
@@ -56,7 +65,7 @@ export function updateMetaDataFiles(version: string): boolean {
       if (ancaJson.cinnabarMeta == null) {
         ancaJson.cinnabarMeta = {};
       }
-      updateMeta(ancaJson.cinnabarMeta);
+      await updateMeta(ancaJson.cinnabarMeta);
       fs.writeFileSync(ANCA_JSON_PATH, JSON.stringify(ancaJson, null, 2));
       success = true;
     } catch (error) {
@@ -66,7 +75,7 @@ export function updateMetaDataFiles(version: string): boolean {
     const cinnabarContent = fs.readFileSync(ANCA_JSON_PATH, "utf8");
     try {
       const cinnabarJson = JSON.parse(cinnabarContent);
-      updateMeta(cinnabarJson);
+      await updateMeta(cinnabarJson);
       fs.writeFileSync(ANCA_JSON_PATH, JSON.stringify(cinnabarJson, null, 2));
       success = true;
     } catch (error) {

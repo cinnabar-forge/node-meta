@@ -11,15 +11,20 @@
   "cinnabarMeta": {
     "dataVersion": 0,
     "version": {
-      "latest": "0.1.2-next.20240719134752",
-      "timestamp": 1721396872
+      "latest": "0.1.2",
+      "latestNext": "0.1.2-next.20240719221449",
+      "timestamp": 1721427289
     },
     "files": [
       {
         "path": "./src/cinnabar.ts",
         "type": "typescript"
       }
-    ]
+    ],
+    "repo": {
+      "type": "github",
+      "value": "cinnabar-forge/node-meta"
+    }
   },
   "deployment": {
     "preparation": [

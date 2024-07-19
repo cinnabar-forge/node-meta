@@ -1,4 +1,6 @@
-import { parseCli, promptOptions } from "clivo";
+import { parseCli, promptOptions, promptText } from "clivo";
+
+import { checkGithubRepo } from "./git.js";
 
 export type Option = "build" | "interactive" | "prerelease" | "pwd" | "update";
 
@@ -32,4 +34,16 @@ export async function askUpdateType(): Promise<string> {
     { label: "Build", name: "build" },
   ]);
   return answer.name;
+}
+
+/**
+ * Ask the user to enter the GitHub repository
+ */
+export async function askGithubRepo(): Promise<string> {
+  const text = await promptText("Enter GitHub repository (format: user/repo)");
+  if (!checkGithubRepo(text)) {
+    console.log("Invalid GitHub repository format");
+    return await askGithubRepo();
+  }
+  return text;
 }

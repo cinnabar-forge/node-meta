@@ -1,11 +1,13 @@
 export interface CinnabarMeta {
   dataVersion: number;
   files: CinnabarMetaFile[];
+  repo: CinnabarMetaRepo;
   version: CinnabarMetaVersion;
 }
 
 export interface CinnabarMetaVersion {
   latest: string;
+  latestNext?: string;
   timestamp: number;
 }
 
@@ -15,6 +17,11 @@ export interface CinnabarMetaParsedVersion {
   patch: number;
   prerelease?: string;
   prereleaseNumber?: number;
+}
+
+export interface CinnabarMetaRepo {
+  type: "github";
+  value: string;
 }
 
 export interface CinnabarMetaFile {
