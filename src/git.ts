@@ -9,11 +9,17 @@ import { CinnabarMetaGitLogItem } from "./types.js";
 export function getGitLog(tagOrCommit: string): CinnabarMetaGitLogItem[] {
   try {
     const log = execSync(
-      `git log ${tagOrCommit}..HEAD --pretty=format:'%H|%ad|%s|%an' --date=short`,
+      `git log ${tagOrCommit}..HEAD --pretty=format:'%H%n%B'`,
     ).toString();
-    return log.split("\n").map((line) => {
-      const [hash, date, message, author] = line.split("|");
-      return { author, date, hash, message };
+    return log.split("\n\n").map((line) => {
+      const [hash, ...message] = line.split("\n");
+      const messages: string[] = [];
+      message.forEach((msg) => {
+        if (msg.length > 0) {
+          messages.push(msg);
+        }
+      });
+      return { hash, message: messages.join("\n") };
     });
   } catch (error) {
     console.error("Error fetching git log:", error);
