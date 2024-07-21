@@ -45,7 +45,7 @@ export async function updateMetaDataFiles(
   newVersion: string,
   isBuild: boolean,
   files: CinnabarMetaFile[],
-  repo: CinnabarMetaRepo,
+  repo?: CinnabarMetaRepo | null,
 ): Promise<boolean> {
   const updateMeta = async (data: CinnabarMeta) => {
     data.dataVersion = 0;
@@ -57,7 +57,9 @@ export async function updateMetaDataFiles(
     if (data.files == null) {
       data.files = [];
     }
-    data.repo = repo;
+    if (repo != null) {
+      data.repo = repo;
+    }
   };
 
   let success = false;

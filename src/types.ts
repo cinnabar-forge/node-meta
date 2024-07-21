@@ -1,7 +1,8 @@
 export interface CinnabarMeta {
   dataVersion: number;
-  files: CinnabarMetaFile[];
-  repo: CinnabarMetaRepo;
+  files?: CinnabarMetaFile[];
+  repo?: CinnabarMetaRepo;
+  updateChangelog?: boolean;
   version: CinnabarMetaVersion;
 }
 

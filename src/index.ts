@@ -60,7 +60,7 @@ async function main() {
       ? metaData.repo
       : null;
 
-  if (githubRepo == null) {
+  if (githubRepo == null && metaData?.updateChangelog) {
     if (isInteractive) {
       githubRepo = {
         type: "github",
@@ -160,7 +160,7 @@ async function main() {
     githubRepo,
   );
 
-  if (githubRepo != null && build == null) {
+  if (metaData?.updateChangelog && githubRepo != null && build == null) {
     await updateChangelog(isInteractive, oldVersion, newVersion, githubRepo);
   }
 }

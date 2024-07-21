@@ -33,7 +33,8 @@
     "repo": {
       "type": "github",
       "value": "cinnabar-forge/node-meta"
-    }
+    },
+    "updateChangelog": true
   },
   "deployment": {
     "preparation": [
