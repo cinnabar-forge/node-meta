@@ -53,15 +53,18 @@ export function getMostRecentGitTag(): string {
 }
 
 /**
- *
+ * Commits changes to the git repository
+ * @param version
  * @param push
  */
-export function commitChanges(push: boolean): boolean {
+export function commitChanges(version: string, push: boolean): boolean {
   try {
-    execSync("git add .");
-    execSync(`git commit -m "Automated commit"`);
+    execSync("git add -A");
+    execSync(`git commit -m "release version ${version}" -n`);
+    execSync(`git tag "v${version}"`);
     if (push) {
       execSync("git push");
+      execSync("git push --tags");
     }
     return true;
   } catch (error) {

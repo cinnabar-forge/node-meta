@@ -103,3 +103,16 @@ export async function askGithubRepo(): Promise<string> {
 export async function askPrereleaseTag(): Promise<string> {
   return await promptText("Enter new prerelease tag");
 }
+
+/**
+ * Ask the user to choose the commit type
+ */
+export async function askCommitType(): Promise<string> {
+  return (
+    await promptOptions("What to do next?", [
+      { label: `Nothing`, name: "nothing" },
+      { label: `Commit and tag`, name: "commit" },
+      { label: `Commit and tag and push`, name: "commit-push" },
+    ])
+  ).name;
+}

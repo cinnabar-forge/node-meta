@@ -1,6 +1,7 @@
-import { updateChangelog } from "./changelog.js";
+import { updateChangelog, writeChangelog } from "./changelog.js";
 import { CINNABAR_PROJECT_VERSION } from "./cinnabar.js";
 import {
+  askCommitType,
   askGithubRepo,
   askPrereleaseTag,
   askUpdateType,
@@ -11,7 +12,7 @@ import {
   getMetaDataFromFiles,
   updateMetaDataFiles,
 } from "./files.js";
-import { checkGithubRepo } from "./git.js";
+import { checkGithubRepo, commitChanges } from "./git.js";
 import {
   checkVersion,
   markBuild,
@@ -161,8 +162,25 @@ async function main() {
   );
 
   if (metaData?.updateChangelog && githubRepo != null && build == null) {
-    await updateChangelog(isInteractive, oldVersion, newVersion, githubRepo);
+    const versionChangelog = await updateChangelog(
+      isInteractive,
+      oldVersion,
+      newVersion,
+      githubRepo,
+    );
+
+    writeChangelog(newVersion, versionChangelog);
   }
+
+  if (build == null) {
+    const commitType = await askCommitType();
+
+    if (commitType === "commit" || commitType === "commit-push") {
+      commitChanges(newVersion, commitType === "commit-push");
+    }
+  }
+
+  console.log("\nBye!\n");
 }
 
 main();

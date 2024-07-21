@@ -71,7 +71,10 @@ export async function updateMetaDataFiles(
         ancaJson.cinnabarMeta = {};
       }
       await updateMeta(ancaJson.cinnabarMeta);
-      fs.writeFileSync(ANCA_JSON_PATH, JSON.stringify(ancaJson, null, 2));
+      fs.writeFileSync(
+        ANCA_JSON_PATH,
+        JSON.stringify(ancaJson, null, 2) + "\n",
+      );
       success = true;
     } catch (error) {
       console.error("Error parsing anca.json:", error);
@@ -83,7 +86,7 @@ export async function updateMetaDataFiles(
       await updateMeta(cinnabarJson);
       fs.writeFileSync(
         CINNABAR_JSON_PATH,
-        JSON.stringify(cinnabarJson, null, 2),
+        JSON.stringify(cinnabarJson, null, 2) + "\n",
       );
       success = true;
     } catch (error) {
