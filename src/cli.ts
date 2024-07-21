@@ -1,6 +1,8 @@
 import { parseCli, promptOptions, promptText } from "clivo";
 
 import { checkGithubRepo } from "./git.js";
+import { CinnabarMetaParsedVersion } from "./types.js";
+import { updatePrerelease, updateVersion } from "./version.js";
 
 export type Option = "build" | "interactive" | "prerelease" | "pwd" | "update";
 
@@ -22,27 +24,64 @@ export function setupCli(): Record<Option, string[]> {
 
 /**
  * Ask the user to choose the update type
- * @param isPrerelease
+ * @param parsedVersion
+ * @param oldVersion
  */
-export async function askUpdateType(isPrerelease: boolean): Promise<string> {
-  const answers = isPrerelease
-    ? [
-        { label: "Update prerelease", name: "prerelease-update" },
-        { label: "Change prerelease", name: "prerelease-change" },
-        { label: "Release prerelease", name: "prerelease-release" },
-        { label: "Build", name: "build" },
-      ]
-    : [
-        { label: "Major", name: "major" },
-        { label: "Minor", name: "minor" },
-        { label: "Patch", name: "patch" },
-        { label: "Major prerelease", name: "major-prerelease" },
-        { label: "Minor prerelease", name: "minor-prerelease" },
-        { label: "Patch prerelease", name: "patch-prerelease" },
-        { label: "Build", name: "build" },
-      ];
+export async function askUpdateType(
+  parsedVersion: CinnabarMetaParsedVersion,
+  oldVersion: string,
+): Promise<string> {
+  const answers =
+    parsedVersion.prerelease != null
+      ? [
+          {
+            label: `Update (${updatePrerelease(parsedVersion, parsedVersion.prerelease)})`,
+            name: "prerelease-update",
+          },
+          {
+            label: `Change tag (${updatePrerelease(parsedVersion, "newtag")})`,
+            name: "prerelease-change",
+          },
+          {
+            label: `Release (${updatePrerelease(parsedVersion, "yes")})`,
+            name: "prerelease-release",
+          },
+          { label: `Mark build info`, name: "build" },
+        ]
+      : [
+          {
+            label: `Major (${updateVersion(parsedVersion, "major")})`,
+            name: "major",
+          },
+          {
+            label: `Minor (${updateVersion(parsedVersion, "minor")})`,
+            name: "minor",
+          },
+          {
+            label: `Patch (${updateVersion(parsedVersion, "patch")})`,
+            name: "patch",
+          },
+          {
+            label: `Major prerelease (${updateVersion(parsedVersion, "major", "tag")})`,
+            name: "major-prerelease",
+          },
+          {
+            label: `Minor prerelease (${updateVersion(parsedVersion, "minor", "tag")})`,
+            name: "minor-prerelease",
+          },
+          {
+            label: `Patch prerelease (${updateVersion(parsedVersion, "patch", "tag")})`,
+            name: "patch-prerelease",
+          },
+          { label: `Mark build info`, name: "build" },
+        ];
 
-  const answer = await promptOptions("Choose the update type", answers);
+  const answer = await promptOptions(
+    parsedVersion.prerelease != null
+      ? `What to do with prerelease version ${oldVersion}?`
+      : `Update version ${oldVersion} to...`,
+    answers,
+  );
   return answer.name;
 }
 

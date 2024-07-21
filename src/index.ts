@@ -80,7 +80,7 @@ async function main() {
   let newVersion;
 
   if (options.interactive) {
-    const updateType = await askUpdateType(parsedVersion.prerelease != null);
+    const updateType = await askUpdateType(parsedVersion, oldVersion);
 
     switch (updateType) {
       case "prerelease-update":
