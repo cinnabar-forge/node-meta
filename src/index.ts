@@ -1,4 +1,5 @@
 import { updateChangelog } from "./changelog.js";
+import { CINNABAR_PROJECT_VERSION } from "./cinnabar.js";
 import {
   askGithubRepo,
   askPrereleaseTag,
@@ -23,6 +24,14 @@ import {
  * Main function
  */
 async function main() {
+  const printIntro = () => {
+    const design1 = "=".repeat(4);
+    const text = `${design1} Cinnabar Meta v${CINNABAR_PROJECT_VERSION} ${design1}`;
+    const design2 = "=".repeat(text.length);
+    console.log(`\n${design2}\n${text}\n${design2}\n`);
+  };
+  printIntro();
+
   const options = setupCli();
 
   const isInteractive =
@@ -119,15 +128,15 @@ async function main() {
     return;
   }
 
-  console.log(
-    parsedVersion,
-    "update",
-    update,
-    "prerelease",
-    prerelease,
-    "build",
-    build,
-  );
+  // console.log(
+  //   parsedVersion,
+  //   "update",
+  //   update,
+  //   "prerelease",
+  //   prerelease,
+  //   "build",
+  //   build,
+  // );
 
   if (update != null) {
     newVersion = updateVersion(parsedVersion, update, prerelease);
@@ -141,9 +150,15 @@ async function main() {
 
   checkVersion(newVersion);
 
-  console.log("newVersion", newVersion);
+  console.log("New app version:", newVersion);
 
-  await updateMetaDataFiles(oldVersion, newVersion, build != null, githubRepo);
+  await updateMetaDataFiles(
+    oldVersion,
+    newVersion,
+    build != null,
+    metaData?.files || [],
+    githubRepo,
+  );
 
   if (githubRepo != null && build == null) {
     await updateChangelog(isInteractive, oldVersion, newVersion, githubRepo);

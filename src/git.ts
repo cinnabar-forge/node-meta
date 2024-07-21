@@ -75,7 +75,6 @@ export function commitChanges(push: boolean): boolean {
  * @param text
  */
 export function checkGithubRepo(text?: string) {
-  console.log(text);
   return text != null
     ? text.includes("/") &&
         text.split("/").length === 2 &&

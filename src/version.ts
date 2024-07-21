@@ -107,13 +107,15 @@ export function updatePrerelease(
 export function markBuild(parsedVersion: CinnabarMetaParsedVersion): string {
   const { major, minor, patch, prerelease, prereleaseNumber } = parsedVersion;
 
-  const build = new Date(Date.now())
+  const datetime = new Date(Date.now())
     .toISOString()
     .replaceAll("-", "")
     .replaceAll(":", "")
-    .replace("T", "")
+    .replace("T", ".")
     .replace("Z", "")
-    .split(".")[0];
+    .split(".");
+
+  const build = datetime[0] + "." + datetime[1];
 
   return (
     major +

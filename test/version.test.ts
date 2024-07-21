@@ -86,7 +86,7 @@ describe("Version Management", function () {
   describe("markBuild()", function () {
     it("should append the build version correctly", function () {
       const result = markBuild({ major: 1, minor: 2, patch: 3 });
-      expect(result).to.match(/\d+\.\d+\.\d+-next\.\d{8}\d{6}/);
+      expect(result).to.match(/\d+\.\d+\.\d+-next\.\d{8}\.\d{6}/);
     });
   });
 });

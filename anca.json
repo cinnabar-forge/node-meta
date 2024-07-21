@@ -12,10 +12,18 @@
     "dataVersion": 0,
     "version": {
       "latest": "0.1.2",
-      "latestNext": "0.1.2-next.20240719224111",
-      "timestamp": 1721428871
+      "latestNext": "0.1.2-next.20240721.114852",
+      "timestamp": 1721562532
     },
     "files": [
+      {
+        "path": "./package.json",
+        "type": "nodejs-package-json"
+      },
+      {
+        "path": "./package-lock.json",
+        "type": "nodejs-package-lock-json"
+      },
       {
         "path": "./src/cinnabar.ts",
         "type": "typescript"
