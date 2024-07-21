@@ -6,7 +6,8 @@ import { CinnabarMetaParsedVersion } from "./types.js";
  * @param version
  */
 export function parseVersion(version: string): CinnabarMetaParsedVersion {
-  const [versionPart, prereleasePart] = version.split("-");
+  const [versionAndPrereleasePart] = version.split("+");
+  const [versionPart, prereleasePart] = versionAndPrereleasePart.split("-");
   const [major, minor, patch] = versionPart.split(".");
   const [prerelease, prereleaseNumber] = prereleasePart
     ? prereleasePart.split(".")
@@ -16,9 +17,9 @@ export function parseVersion(version: string): CinnabarMetaParsedVersion {
     major: parseInt(major) ?? 0,
     minor: parseInt(minor) ?? 0,
     patch: parseInt(patch) ?? 0,
-    prerelease: prerelease !== "next" ? prerelease : undefined,
+    prerelease: prerelease || undefined,
     prereleaseNumber:
-      prerelease !== "next" && prereleaseNumber != null
+      prerelease && prereleaseNumber != null
         ? parseInt(prereleaseNumber)
         : undefined,
   };
@@ -115,7 +116,7 @@ export function markBuild(parsedVersion: CinnabarMetaParsedVersion): string {
     .replace("Z", "")
     .split(".");
 
-  const build = datetime[0] + "." + datetime[1];
+  const build = datetime[0] + "_" + datetime[1];
 
   return (
     major +
@@ -125,6 +126,6 @@ export function markBuild(parsedVersion: CinnabarMetaParsedVersion): string {
     patch +
     (prerelease ? "-" + prerelease : "") +
     (prereleaseNumber ? "." + prereleaseNumber : "") +
-    ("-next." + build)
+    ("+next." + build)
   );
 }

@@ -27,6 +27,7 @@ export interface CinnabarMetaRepo {
 export interface CinnabarMetaFile {
   path: string;
   type: string;
+  updateBuild?: boolean;
 }
 
 export interface CinnabarMetaGitLogItem {

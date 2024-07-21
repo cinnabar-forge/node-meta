@@ -90,6 +90,9 @@ export async function updateMetaDataFiles(
   }
 
   for (const file of files) {
+    if (isBuild && !file.updateBuild) {
+      continue;
+    }
     if (file.type === "nodejs-package-json") {
       let packageJson: { version?: string } = {};
       if (fs.existsSync(file.path)) {

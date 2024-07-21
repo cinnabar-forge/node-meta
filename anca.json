@@ -12,8 +12,8 @@
     "dataVersion": 0,
     "version": {
       "latest": "0.1.2",
-      "latestNext": "0.1.2-next.20240721.114852",
-      "timestamp": 1721562532
+      "latestNext": "0.1.2+next.20240721_161313",
+      "timestamp": 1721578393
     },
     "files": [
       {
@@ -26,7 +26,8 @@
       },
       {
         "path": "./src/cinnabar.ts",
-        "type": "typescript"
+        "type": "typescript",
+        "updateBuild": true
       }
     ],
     "repo": {
