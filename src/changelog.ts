@@ -36,9 +36,11 @@ function prepareVersionChangelog(
     });
   });
 
+  const sortedChanges = Array.from(changesMap).sort();
+
   let fullListMarkdown = "";
-  changesMap.forEach((hashes, message) => {
-    fullListMarkdown += `- [[${hashes.join("], [")}]] ${message}\n`;
+  sortedChanges.forEach(([message, hashes]) => {
+    fullListMarkdown += `- [[${hashes.sort().join("], [")}]] ${message}\n`;
   });
 
   const releaseDate = new Date().toISOString().split("T")[0];
