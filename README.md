@@ -2,15 +2,9 @@
 
 > **DISCLAIMER**: This project is not production ready. All versions below 1.0.0 should be considered unstable
 
-Configuration editor and version updater
+Version updater
 
 ## Installation
-
-### Binary
-
-[Get the latest binaries](https://example.com/github/user/app-name/releases/latest).
-
-If you want to use the app with a command line, rename it to `@cinnabar-forge/meta` or `@cinnabar-forge/meta.exe` and add the location to `PATH`.
 
 ### npm
 
@@ -21,6 +15,10 @@ npm install -g @cinnabar-forge/meta
 ## Contributing
 
 Visit [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+Current maintainers:
+
+- Timur Moziev ([@TimurRin](https://github.com/TimurRin))
 
 ## License
 
