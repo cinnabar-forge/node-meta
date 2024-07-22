@@ -30,7 +30,7 @@
   },
   "files": [
     "bin",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "node esbuild.js",
