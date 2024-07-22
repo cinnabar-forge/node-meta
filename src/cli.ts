@@ -116,3 +116,11 @@ export async function askCommitType(): Promise<string> {
     ])
   ).name;
 }
+
+/**
+ * Ask the user to enter yes or no
+ * @param text
+ */
+export async function askYesOrNo(text: string): Promise<string> {
+  return await promptText(`${text} (yes/no)`);
+}

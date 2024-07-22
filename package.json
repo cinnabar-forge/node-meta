@@ -40,10 +40,11 @@
     "fix": "prettier . --write && eslint --fix .",
     "format": "prettier . --write",
     "lint": "eslint --fix .",
+    "prepack": "npm run build",
     "test": "prettier . -c && eslint --max-warnings 0 . && tsc && mocha './build/dev/test'"
   },
   "dependencies": {
-    "clivo": "0.4.0"
+    "clivo": "0.5.1"
   },
   "devDependencies": {
     "@cinnabar-forge/eslint-plugin": "0.6.1",

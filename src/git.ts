@@ -66,7 +66,7 @@ export function getMostRecentGitTag(): string {
 export function commitChanges(version: string, push: boolean): boolean {
   try {
     execSync("git add -A");
-    execSync(`git commit -m "release version ${version}" -n`);
+    execSync(`git commit -m "release version ${version}"`);
     execSync(`git tag "v${version}"`);
     if (push) {
       execSync("git push");
@@ -74,8 +74,7 @@ export function commitChanges(version: string, push: boolean): boolean {
     }
     return true;
   } catch (error) {
-    console.error("Error committing changes:", error);
-    return false;
+    throw new Error("Error committing changes to git repository: " + error);
   }
 }
 
@@ -90,4 +89,30 @@ export function checkGithubRepo(text?: string) {
         text.split("/")[0].length > 0 &&
         text.split("/")[1].length > 0
     : false;
+}
+
+/**
+ * Get the last commit hash
+ */
+export function getTheLastCommitHash() {
+  try {
+    return execSync("git rev-parse HEAD").toString().trim();
+  } catch (error) {
+    console.error("Error fetching the last commit hash:", error);
+    return false;
+  }
+}
+
+/**
+ * Reset to a specific commit
+ * @param commit
+ */
+export function resetToCommit(commit: string) {
+  try {
+    execSync(`git reset --hard ${commit}`);
+    return true;
+  } catch (error) {
+    console.error("Error resetting to commit:", error);
+    return false;
+  }
 }

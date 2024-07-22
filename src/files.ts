@@ -1,6 +1,8 @@
+import { listenClivoEvent } from "clivo";
 import fs from "fs";
 import path from "path";
 
+import { getTheLastCommitHash } from "./git.js";
 import { CinnabarMeta, CinnabarMetaFile, CinnabarMetaRepo } from "./types.js";
 
 const ANCA_JSON_PATH = "anca.json";
@@ -150,3 +152,52 @@ export function detectVersionsFromFiles(): string[] {
 
   return versions;
 }
+
+/**
+ * Locks the file to prevent multiple instances of Cinnabar running or errors
+ */
+export function lockCinnabar() {
+  const lockFilePath = "cinnabar.lock";
+  if (fs.existsSync(lockFilePath)) {
+    return fs.readFileSync(lockFilePath, "utf8");
+  }
+  fs.writeFileSync(lockFilePath, getTheLastCommitHash() || "");
+  return true;
+}
+
+/**
+ * Unlocks the file
+ */
+export function unlockCinnabar() {
+  const lockFilePath = "cinnabar.lock";
+  if (fs.existsSync(lockFilePath)) {
+    fs.unlinkSync(lockFilePath);
+  }
+}
+
+/**
+ * Locks the PID file to prevent multiple instances of Cinnabar running or errors
+ */
+export function lockCinnabarPid() {
+  const pidLockFilePath = "cinnabar.pid.lock";
+  if (fs.existsSync(pidLockFilePath)) {
+    throw new Error("Cinnabar is already running");
+  }
+  fs.writeFileSync(pidLockFilePath, process.pid.toString());
+  return true;
+}
+
+/**
+ * Unlocks the PID file
+ */
+export function unlockCinnabarPid() {
+  const pidLockFilePath = "cinnabar.pid.lock";
+  if (fs.existsSync(pidLockFilePath)) {
+    fs.unlinkSync(pidLockFilePath);
+  }
+}
+
+listenClivoEvent("clivoCancel", () => {
+  unlockCinnabar();
+  unlockCinnabarPid();
+});

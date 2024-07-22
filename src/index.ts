@@ -5,14 +5,19 @@ import {
   askGithubRepo,
   askPrereleaseTag,
   askUpdateType,
+  askYesOrNo,
   setupCli,
 } from "./cli.js";
 import {
   detectVersionsFromFiles,
   getMetaDataFromFiles,
+  lockCinnabar,
+  lockCinnabarPid,
+  unlockCinnabar,
+  unlockCinnabarPid,
   updateMetaDataFiles,
 } from "./files.js";
-import { checkGithubRepo, commitChanges } from "./git.js";
+import { checkGithubRepo, commitChanges, resetToCommit } from "./git.js";
 import {
   checkVersion,
   markBuild,
@@ -25,6 +30,7 @@ import {
  * Main function
  */
 async function main() {
+  lockCinnabarPid();
   const printIntro = () => {
     const design1 = "=".repeat(4);
     const text = `${design1} Cinnabar Meta v${CINNABAR_PROJECT_VERSION} ${design1}`;
@@ -32,6 +38,25 @@ async function main() {
     console.log(`\n${design2}\n${text}\n${design2}\n`);
   };
   printIntro();
+  const bye = () => {
+    unlockCinnabar();
+    console.log("\nBye!\n");
+    unlockCinnabarPid();
+  };
+
+  const success = lockCinnabar();
+  if (success !== true) {
+    console.log("[WARNING] Reverting to the last stable commit", success);
+    const askToRevert = await askYesOrNo(
+      "Do you want to revert to the last stable commit?",
+    );
+    if (askToRevert === "yes") {
+      resetToCommit(success);
+    } else {
+      bye();
+      return;
+    }
+  }
 
   const options = setupCli();
 
@@ -68,9 +93,10 @@ async function main() {
         value: await askGithubRepo(),
       };
     } else {
-      throw new Error(
+      console.log(
         "No GitHub repository found in metadata. Use --interactive option to set it.",
       );
+      bye();
     }
   }
 
@@ -126,7 +152,7 @@ async function main() {
     console.log(
       "No update type specified. Pass --interactive option to choose one, or use specific update type with --update option.",
     );
-    return;
+    bye();
   }
 
   // console.log(
@@ -146,6 +172,8 @@ async function main() {
   } else if (build != null) {
     newVersion = markBuild(parsedVersion);
   } else {
+    console.log("No update.");
+    bye();
     return;
   }
 
@@ -180,7 +208,7 @@ async function main() {
     }
   }
 
-  console.log("\nBye!\n");
+  bye();
 }
 
 main();
