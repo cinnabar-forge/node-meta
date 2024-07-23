@@ -40,7 +40,7 @@ function prepareVersionChangelog(
 
   let fullListMarkdown = "";
   sortedChanges.forEach(([message, hashes]) => {
-    fullListMarkdown += `- [[${hashes.sort().join("], [")}]] ${message}\n`;
+    fullListMarkdown += `- ${message} ([${hashes.sort().join("], [")}])\n`;
   });
 
   const releaseDate = new Date().toISOString().split("T")[0];
