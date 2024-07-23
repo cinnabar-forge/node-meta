@@ -8,6 +8,13 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.3.1](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.3.1) — 2024-07-23
+
+- fix prepareVersionChangelog for non-tagged repos ([1022a9e])
+
+[1022a9e]: https://github.com/cinnabar-forge/node-meta/commit/1022a9e
+
+
 ## [0.3.0](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.3.0) — 2024-07-23
 
 - change log display in markdown ([4d9dfea])
@@ -63,4 +70,4 @@ Full list:
 [935ae0d]: https://github.com/cinnabar-forge/node-meta/commit/935ae0d
 
 
-[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.3.1...HEAD
