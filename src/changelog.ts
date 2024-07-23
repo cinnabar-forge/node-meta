@@ -2,7 +2,11 @@ import { promptText } from "clivo";
 import fs from "fs";
 import path from "path";
 
-import { checkVersionExistsInGitTags, getGitLog } from "./git.js";
+import {
+  checkVersionExistsInGitTags,
+  getGitLog,
+  getMostRecentGitTag,
+} from "./git.js";
 import { CinnabarMetaGitLogItem, CinnabarMetaRepo } from "./types.js";
 
 const COMMENT_LINE = "[comment]: # (Insert new version after this line)";
@@ -20,11 +24,14 @@ function prepareVersionChangelog(
   newVersion: string,
   versionComment: null | string,
 ) {
+  const lastTag = getMostRecentGitTag();
   const gitLogs: CinnabarMetaGitLogItem[] = checkVersionExistsInGitTags(
     oldVersion,
   )
     ? getGitLog("v" + oldVersion)
-    : [];
+    : lastTag != null
+      ? getGitLog(lastTag)
+      : getGitLog();
   const changesMap = new Map<string, string[]>();
 
   gitLogs.forEach((log) => {

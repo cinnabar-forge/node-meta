@@ -3,13 +3,13 @@ import { execSync } from "child_process";
 import { CinnabarMetaGitLogItem } from "./types.js";
 
 /**
- *
+ * Gets an array of objects contains log since specified tag or commit
  * @param tagOrCommit
  */
-export function getGitLog(tagOrCommit: string): CinnabarMetaGitLogItem[] {
+export function getGitLog(tagOrCommit?: string): CinnabarMetaGitLogItem[] {
   try {
     const log = execSync(
-      `git log ${tagOrCommit}..HEAD --pretty=format:'%H%n%B'`,
+      `git log ${tagOrCommit ? tagOrCommit + "..HEAD " : ""}--pretty=format:'%H%n%B'`,
     ).toString();
     return log.split("\n\n").map((line) => {
       const [hash, ...message] = line.split("\n");
