@@ -8,6 +8,13 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.3.0](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.3.0) — 2024-07-23
+
+- change log display in markdown ([4d9dfea])
+
+[4d9dfea]: https://github.com/cinnabar-forge/node-meta/commit/4d9dfea
+
+
 ## [0.2.0](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.2.0) — 2024-07-22
 
 This is an overhaul of the previous iteration. Clivo instead of inquirer. Support for any prerelease tag. Changelog generation.
@@ -56,4 +63,4 @@ Full list:
 [935ae0d]: https://github.com/cinnabar-forge/node-meta/commit/935ae0d
 
 
-[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.3.0...HEAD
