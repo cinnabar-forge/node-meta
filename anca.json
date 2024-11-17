@@ -47,6 +47,11 @@
   "development": {
     "readme": {}
   },
+  "namings": {
+    "text": "Cinnabar Meta",
+    "npmPackage": "@cinnabar-forge/meta"
+  },
+  "public": true,
   "type": "app",
   "stack": "nodejs"
 }

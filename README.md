@@ -1,4 +1,4 @@
-# @cinnabar-forge/meta
+# Cinnabar Meta
 
 > **DISCLAIMER**: This project is not production ready. All versions below 1.0.0 should be considered unstable
 
@@ -12,13 +12,23 @@ Version updater
 npm install -g @cinnabar-forge/meta
 ```
 
+### Bundled script
+
+[Get the latest bundled script](https://github.com/cinnabar-forge/node-meta/releases/latest).
+
+This script has everything to run the project without any extra dependencies. You need Node.js binary to run it.
+
+### Binary
+
+[Get the latest binaries](https://github.com/cinnabar-forge/node-meta/releases/latest).
+
+If you want to use the app with a command line, rename it to `new-app` or `new-app.exe` and add the location to `PATH`.
+
 ## Contributing
 
 Visit [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-Current maintainers:
-
-- Timur Moziev ([@TimurRin](https://github.com/TimurRin))
+Current maintainer - Timur Moziev ([@TimurRin](https://github.com/TimurRin))
 
 ## License
 
