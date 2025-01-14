@@ -1,6 +1,6 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 
-import { CinnabarMetaGitLogItem } from "./types.js";
+import type { CinnabarMetaGitLogItem } from "./types.js";
 
 /**
  * Gets an array of objects contains log since specified tag or commit
@@ -9,16 +9,16 @@ import { CinnabarMetaGitLogItem } from "./types.js";
 export function getGitLog(tagOrCommit?: string): CinnabarMetaGitLogItem[] {
   try {
     const log = execSync(
-      `git log ${tagOrCommit ? tagOrCommit + "..HEAD " : ""}--pretty=format:'%H%n%B'`,
+      `git log ${tagOrCommit ? `${tagOrCommit}..HEAD ` : ""}--pretty=format:'%H%n%B'`,
     ).toString();
     return log.split("\n\n").map((line) => {
       const [hash, ...message] = line.split("\n");
       const messages: string[] = [];
-      message.forEach((msg) => {
+      for (const msg of message) {
         if (msg.length > 0) {
           messages.push(msg);
         }
-      });
+      }
       return { hash, message: messages.join("\n") };
     });
   } catch (error) {
@@ -34,9 +34,9 @@ export function getGitLog(tagOrCommit?: string): CinnabarMetaGitLogItem[] {
  */
 export function checkVersionExistsInGitTags(version: string): boolean {
   try {
-    const tags = execSync(`git tag`).toString();
+    const tags = execSync("git tag").toString();
     const tagList = tags.split("\n");
-    return tagList.includes("v" + version);
+    return tagList.includes(`v${version}`);
   } catch (error) {
     console.error("Error checking version in git tags:", error);
     return false;
@@ -74,7 +74,7 @@ export function commitChanges(version: string, push: boolean): boolean {
     }
     return true;
   } catch (error) {
-    throw new Error("Error committing changes to git repository: " + error);
+    throw new Error(`Error committing changes to git repository: ${error}`);
   }
 }
 

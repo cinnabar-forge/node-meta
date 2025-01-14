@@ -1,7 +1,7 @@
 import { parseCli, promptOptions, promptText } from "clivo";
 
 import { checkGithubRepo } from "./git.js";
-import { CinnabarMetaParsedVersion } from "./types.js";
+import type { CinnabarMetaParsedVersion } from "./types.js";
 import { updatePrerelease, updateVersion } from "./version.js";
 
 export type Option = "build" | "interactive" | "prerelease" | "pwd" | "update";
@@ -46,7 +46,7 @@ export async function askUpdateType(
             label: `Release (${updatePrerelease(parsedVersion, "yes")})`,
             name: "prerelease-release",
           },
-          { label: `Mark build info`, name: "build" },
+          { label: "Mark build info", name: "build" },
         ]
       : [
           {
@@ -73,7 +73,7 @@ export async function askUpdateType(
             label: `Patch prerelease (${updateVersion(parsedVersion, "patch", "tag")})`,
             name: "patch-prerelease",
           },
-          { label: `Mark build info`, name: "build" },
+          { label: "Mark build info", name: "build" },
         ];
 
   const answer = await promptOptions(
@@ -110,9 +110,9 @@ export async function askPrereleaseTag(): Promise<string> {
 export async function askCommitType(): Promise<string> {
   return (
     await promptOptions("What to do next?", [
-      { label: `Nothing`, name: "nothing" },
-      { label: `Commit and tag`, name: "commit" },
-      { label: `Commit and tag and push`, name: "commit-push" },
+      { label: "Nothing", name: "nothing" },
+      { label: "Commit and tag", name: "commit" },
+      { label: "Commit and tag and push", name: "commit-push" },
     ])
   ).name;
 }

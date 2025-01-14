@@ -1,13 +1,13 @@
+import fs from "node:fs";
+import path from "node:path";
 import { promptText } from "clivo";
-import fs from "fs";
-import path from "path";
 
 import {
   checkVersionExistsInGitTags,
   getGitLog,
   getMostRecentGitTag,
 } from "./git.js";
-import { CinnabarMetaGitLogItem, CinnabarMetaRepo } from "./types.js";
+import type { CinnabarMetaGitLogItem, CinnabarMetaRepo } from "./types.js";
 
 const COMMENT_LINE = "[comment]: # (Insert new version after this line)";
 
@@ -28,36 +28,36 @@ function prepareVersionChangelog(
   const gitLogs: CinnabarMetaGitLogItem[] = checkVersionExistsInGitTags(
     oldVersion,
   )
-    ? getGitLog("v" + oldVersion)
+    ? getGitLog(`v${oldVersion}`)
     : lastTag != null
       ? getGitLog(lastTag)
       : getGitLog();
   const changesMap = new Map<string, string[]>();
 
-  gitLogs.forEach((log) => {
-    log.message.split("\n").forEach((message) => {
+  for (const log of gitLogs) {
+    for (const message of log.message.split("\n")) {
       if (!changesMap.has(message)) {
         changesMap.set(message, []);
       }
       changesMap.get(message)?.push(log.hash.slice(0, 7));
-    });
-  });
+    }
+  }
 
   const sortedChanges = Array.from(changesMap).sort();
 
   let fullListMarkdown = "";
-  sortedChanges.forEach(([message, hashes]) => {
+  for (const [message, hashes] of sortedChanges) {
     fullListMarkdown += `- ${message} ([${hashes.sort().join("], [")}])\n`;
-  });
+  }
 
   const releaseDate = new Date().toISOString().split("T")[0];
 
-  let newVersionMarkdown = `## [${newVersion}](https://github.com/${githubRepo.value}/releases/tag/v${newVersion}) — ${releaseDate}${versionComment && versionComment.length > 0 ? "\n\n" + versionComment : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? "\n\n" + (versionComment && versionComment.length > 0 ? "Full list:\n\n" : "") + fullListMarkdown : ""}
+  let newVersionMarkdown = `## [${newVersion}](https://github.com/${githubRepo.value}/releases/tag/v${newVersion}) — ${releaseDate}${versionComment && versionComment.length > 0 ? `\n\n${versionComment}` : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? `\n\n${versionComment && versionComment.length > 0 ? "Full list:\n\n" : ""}${fullListMarkdown}` : ""}
 `;
 
-  gitLogs.forEach((log) => {
+  for (const log of gitLogs) {
     newVersionMarkdown += `[${log.hash.slice(0, 7)}]: https://github.com/${githubRepo.value}/commit/${log.hash.slice(0, 7)}\n`;
-  });
+  }
 
   return newVersionMarkdown;
 }

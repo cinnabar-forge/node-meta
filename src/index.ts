@@ -60,10 +60,9 @@ async function main() {
 
   const options = setupCli();
 
-  const isInteractive =
-    options.interactive != null && options.interactive[0] ? true : false;
+  const isInteractive = !!options.interactive?.[0];
 
-  let oldVersion;
+  let oldVersion: string;
 
   const metaData = getMetaDataFromFiles();
 
@@ -100,11 +99,11 @@ async function main() {
     }
   }
 
-  let update;
-  let prerelease;
-  let build;
+  let update: string | undefined;
+  let prerelease: string | undefined;
+  let build: string | undefined;
 
-  let newVersion;
+  let newVersion: string;
 
   if (options.interactive) {
     const updateType = await askUpdateType(parsedVersion, oldVersion);
@@ -139,13 +138,13 @@ async function main() {
     options.update != null ||
     options.build != null
   ) {
-    if (options.update != null && options.update[0]) {
+    if (options.update?.[0]) {
       update = options.update[0];
     }
-    if (options.prerelease != null && options.prerelease[0]) {
+    if (options.prerelease?.[0]) {
       prerelease = options.prerelease[0];
     }
-    if (options.build != null && options.build[0]) {
+    if (options.build?.[0]) {
       build = options.build[0];
     }
   } else {

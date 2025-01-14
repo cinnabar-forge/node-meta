@@ -1,5 +1,5 @@
 import { checkVersionExistsInGitTags } from "./git.js";
-import { CinnabarMetaParsedVersion } from "./types.js";
+import type { CinnabarMetaParsedVersion } from "./types.js";
 
 /**
  * Parse the version
@@ -14,13 +14,13 @@ export function parseVersion(version: string): CinnabarMetaParsedVersion {
     : [];
 
   return {
-    major: parseInt(major) ?? 0,
-    minor: parseInt(minor) ?? 0,
-    patch: parseInt(patch) ?? 0,
+    major: Number.parseInt(major) ?? 0,
+    minor: Number.parseInt(minor) ?? 0,
+    patch: Number.parseInt(patch) ?? 0,
     prerelease: prerelease || undefined,
     prereleaseNumber:
       prerelease && prereleaseNumber != null
-        ? parseInt(prereleaseNumber)
+        ? Number.parseInt(prereleaseNumber)
         : undefined,
   };
 }
@@ -59,9 +59,7 @@ export function updateVersion(
     patch++;
   }
 
-  return (
-    major + "." + minor + "." + patch + (prerelease ? "-" + prerelease : "")
-  );
+  return `${major}.${minor}.${patch}${prerelease ? `-${prerelease}` : ""}`;
 }
 
 /**
@@ -90,15 +88,7 @@ export function updatePrerelease(
     }
   }
 
-  return (
-    major +
-    "." +
-    minor +
-    "." +
-    patch +
-    (prerelease ? "-" + prerelease : "") +
-    (prereleaseNumber ? "." + prereleaseNumber : "")
-  );
+  return `${major}.${minor}.${patch}${prerelease ? `-${prerelease}` : ""}${prereleaseNumber ? `.${prereleaseNumber}` : ""}`;
 }
 
 /**
@@ -116,16 +106,7 @@ export function markBuild(parsedVersion: CinnabarMetaParsedVersion): string {
     .replace("Z", "")
     .split(".");
 
-  const build = datetime[0] + "_" + datetime[1];
+  const build = `${datetime[0]}_${datetime[1]}`;
 
-  return (
-    major +
-    "." +
-    minor +
-    "." +
-    patch +
-    (prerelease ? "-" + prerelease : "") +
-    (prereleaseNumber ? "." + prereleaseNumber : "") +
-    ("+next." + build)
-  );
+  return `${major}.${minor}.${patch}${prerelease ? `-${prerelease}` : ""}${prereleaseNumber ? `.${prereleaseNumber}` : ""}+next.${build}`;
 }
