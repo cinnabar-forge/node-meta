@@ -216,6 +216,7 @@ async function main() {
       oldVersion,
       newVersion,
       gitRepo,
+      versionComment,
     );
 
     writeChangelog(newVersion, versionChangelog);
