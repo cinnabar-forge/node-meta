@@ -11,6 +11,25 @@ import type {
 
 const ANCA_JSON_PATH = "anca.json";
 const CINNABAR_JSON_PATH = "cinnabar.json";
+const UPDATE_CINNABARMETA_PATH = "update.cinnabarmeta";
+
+export function getUpdateTypeFromFile(): {
+  description?: string;
+  update: string;
+} {
+  const updateContent = fs.readFileSync(UPDATE_CINNABARMETA_PATH, "utf8");
+
+  const lines = updateContent.split("\n");
+  const update = lines[0];
+  const description = lines.slice(1).join("\n").trim();
+
+  fs.rmSync(UPDATE_CINNABARMETA_PATH);
+
+  return {
+    update,
+    description,
+  };
+}
 
 /**
  *

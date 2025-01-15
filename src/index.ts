@@ -2,6 +2,8 @@ import { updateChangelog, writeChangelog } from "./changelog.js";
 import { CINNABAR_PROJECT_VERSION } from "./cinnabar.js";
 import {
   askCommitType,
+  askGitProvider,
+  askGiteaRepo,
   askGithubRepo,
   askPrereleaseTag,
   askUpdateType,
@@ -11,6 +13,7 @@ import {
 import {
   detectVersionsFromFiles,
   getMetaDataFromFiles,
+  getUpdateTypeFromFile,
   lockCinnabar,
   lockCinnabarPid,
   unlockCinnabar,
@@ -80,22 +83,28 @@ async function main() {
 
   const parsedVersion = parseVersion(oldVersion);
 
-  let githubRepo =
+  let gitRepo =
     metaData?.repo?.type === "github" && checkGithubRepo(metaData?.repo?.value)
       ? metaData.repo
-      : null;
+      : metaData?.repo?.type === "gitea"
+        ? metaData?.repo
+        : null;
 
-  if (githubRepo == null && metaData?.updateChangelog) {
+  if (gitRepo == null && metaData?.updateChangelog) {
     if (isInteractive) {
-      githubRepo = {
-        type: "github",
-        value: await askGithubRepo(),
-      };
-    } else {
-      console.log(
-        "No GitHub repository found in metadata. Use --interactive option to set it.",
-      );
-      bye();
+      const provider = await askGitProvider();
+
+      if (provider === "github") {
+        gitRepo = {
+          type: provider,
+          value: await askGithubRepo(),
+        };
+      } else {
+        gitRepo = {
+          type: provider,
+          value: await askGiteaRepo(),
+        };
+      }
     }
   }
 
@@ -105,9 +114,7 @@ async function main() {
 
   let newVersion: string;
 
-  if (options.interactive) {
-    const updateType = await askUpdateType(parsedVersion, oldVersion);
-
+  const processUpdateType = async (updateType: string) => {
     switch (updateType) {
       case "prerelease-update":
         prerelease = parsedVersion.prerelease;
@@ -133,6 +140,20 @@ async function main() {
         prerelease = await askPrereleaseTag();
         break;
     }
+  };
+
+  let versionComment: string | undefined;
+
+  if (options.file) {
+    const result = getUpdateTypeFromFile();
+
+    versionComment = result.description;
+
+    processUpdateType(result.update);
+  } else if (options.interactive) {
+    const updateType = await askUpdateType(parsedVersion, oldVersion);
+
+    processUpdateType(updateType);
   } else if (
     options.prerelease != null ||
     options.update != null ||
@@ -152,6 +173,7 @@ async function main() {
       "No update type specified. Pass --interactive option to choose one, or use specific update type with --update option.",
     );
     bye();
+    return;
   }
 
   // console.log(
@@ -185,28 +207,30 @@ async function main() {
     newVersion,
     build != null,
     metaData?.files || [],
-    githubRepo,
+    gitRepo,
   );
 
-  if (metaData?.updateChangelog && githubRepo != null && build == null) {
+  if (metaData?.updateChangelog && build == null) {
     const versionChangelog = await updateChangelog(
       isInteractive,
       oldVersion,
       newVersion,
-      githubRepo,
+      gitRepo,
     );
 
     writeChangelog(newVersion, versionChangelog);
   }
 
   if (build == null) {
-    const commitType = await askCommitType();
-
-    if (commitType === "commit" || commitType === "commit-push") {
-      commitChanges(newVersion, commitType === "commit-push");
+    if (options.interactive) {
+      const commitType = await askCommitType();
+      if (commitType === "commit" || commitType === "commit-push") {
+        commitChanges(newVersion, commitType === "commit-push");
+      }
+    } else {
+      commitChanges(newVersion, options.push != null);
     }
   }
-
   bye();
 }
 

@@ -4,7 +4,14 @@ import { checkGithubRepo } from "./git.js";
 import type { CinnabarMetaParsedVersion } from "./types.js";
 import { updatePrerelease, updateVersion } from "./version.js";
 
-export type Option = "build" | "interactive" | "prerelease" | "pwd" | "update";
+export type Option =
+  | "build"
+  | "file"
+  | "interactive"
+  | "prerelease"
+  | "push"
+  | "pwd"
+  | "update";
 
 /**
  * Parse the CLI arguments and return the options
@@ -18,6 +25,8 @@ export function setupCli(): Record<Option, string[]> {
       { letter: "r", name: "prerelease" },
       { letter: "b", name: "build" },
       { letter: "i", name: "interactive" },
+      { letter: "f", name: "file" },
+      { name: "push" },
     ],
   }) as Record<Option, string[]>;
 }
@@ -86,6 +95,18 @@ export async function askUpdateType(
 }
 
 /**
+ * Ask the user to enter the Git provider
+ */
+export async function askGitProvider(): Promise<"github" | "gitea"> {
+  return (
+    await promptOptions("What is your git provider?", [
+      { label: "GitHub", name: "github" },
+      { label: "Gitea", name: "gitea" },
+    ])
+  ).name as "github" | "gitea";
+}
+
+/**
  * Ask the user to enter the GitHub repository
  */
 export async function askGithubRepo(): Promise<string> {
@@ -94,6 +115,16 @@ export async function askGithubRepo(): Promise<string> {
     console.log("Invalid GitHub repository format");
     return await askGithubRepo();
   }
+  return text;
+}
+
+/**
+ * Ask the user to enter the GitHub repository
+ */
+export async function askGiteaRepo(): Promise<string> {
+  const text = await promptText(
+    "Enter GitHub repository (format: protocol://gitea.example.com/user/repo)",
+  );
   return text;
 }
 

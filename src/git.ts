@@ -65,15 +65,27 @@ export function getMostRecentGitTag(): string {
  */
 export function commitChanges(version: string, push: boolean): boolean {
   try {
+    console.log("Adding changes to git...");
     execSync("git add -A");
+
+    console.log(
+      `Committing changes with message: "release version ${version}"`,
+    );
     execSync(`git commit -m "release version ${version}"`);
+
+    console.log(`Creating tag: "v${version}"`);
     execSync(`git tag "v${version}"`);
+
     if (push) {
-      execSync("git push");
-      execSync("git push --tags");
+      console.log("Pushing changes to origin...");
+      execSync("git push origin");
+      execSync("git push origin --tags");
     }
+
+    console.log("Git operations completed successfully.");
     return true;
   } catch (error) {
+    console.error(`Error committing changes to git repository: ${error}`);
     throw new Error(`Error committing changes to git repository: ${error}`);
   }
 }

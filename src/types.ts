@@ -21,7 +21,7 @@ export interface CinnabarMetaParsedVersion {
 }
 
 export interface CinnabarMetaRepo {
-  type: "github";
+  type: "github" | "gitea";
   value: string;
 }
 

@@ -11,15 +11,48 @@ import type { CinnabarMetaGitLogItem, CinnabarMetaRepo } from "./types.js";
 
 const COMMENT_LINE = "[comment]: # (Insert new version after this line)";
 
+function getReleaseUrl(gitRepo: CinnabarMetaRepo | null, newVersion: string) {
+  if (gitRepo == null) {
+    return null;
+  }
+  return gitRepo.type === "github"
+    ? `https://github.com/${gitRepo.value}/releases/tag/v${newVersion}`
+    : gitRepo.type === "gitea"
+      ? `${gitRepo.value}/releases/tag/v${newVersion}`
+      : null;
+}
+
+function getCommitUrl(gitRepo: CinnabarMetaRepo | null, commitHash: string) {
+  if (gitRepo == null) {
+    return null;
+  }
+  return gitRepo.type === "github"
+    ? `https://github.com/${gitRepo.value}/commit/${commitHash}`
+    : gitRepo.type === "gitea"
+      ? `${gitRepo.value}/commit/${commitHash}`
+      : null;
+}
+
+function getCompareUrl(gitRepo: CinnabarMetaRepo | null) {
+  if (gitRepo == null) {
+    return null;
+  }
+  return gitRepo.type === "github"
+    ? `https://github.com/${gitRepo.value}/compare/HEAD...HEAD`
+    : gitRepo.type === "gitea"
+      ? `${gitRepo.value}/compare/HEAD...HEAD`
+      : null;
+}
+
 /**
  *
- * @param githubRepo
+ * @param gitRepo
  * @param oldVersion
  * @param newVersion
  * @param versionComment
  */
 function prepareVersionChangelog(
-  githubRepo: CinnabarMetaRepo,
+  gitRepo: CinnabarMetaRepo | null,
   oldVersion: string,
   newVersion: string,
   versionComment: null | string,
@@ -52,11 +85,19 @@ function prepareVersionChangelog(
 
   const releaseDate = new Date().toISOString().split("T")[0];
 
-  let newVersionMarkdown = `## [${newVersion}](https://github.com/${githubRepo.value}/releases/tag/v${newVersion}) — ${releaseDate}${versionComment && versionComment.length > 0 ? `\n\n${versionComment}` : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? `\n\n${versionComment && versionComment.length > 0 ? "Full list:\n\n" : ""}${fullListMarkdown}` : ""}
+  const releaseUrl = getReleaseUrl(gitRepo, newVersion);
+  const releaseLink =
+    releaseUrl != null ? `[${newVersion}](${releaseUrl})` : newVersion;
+
+  let newVersionMarkdown = `## ${releaseLink} — ${releaseDate}${versionComment && versionComment.length > 0 ? `\n\n${versionComment}` : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? `\n\n${versionComment && versionComment.length > 0 ? "Full list:\n\n" : ""}${fullListMarkdown}` : ""}
 `;
 
   for (const log of gitLogs) {
-    newVersionMarkdown += `[${log.hash.slice(0, 7)}]: https://github.com/${githubRepo.value}/commit/${log.hash.slice(0, 7)}\n`;
+    const commitHash = log.hash.slice(0, 7);
+    const commitUrl = getCommitUrl(gitRepo, commitHash);
+    const commitLink =
+      commitUrl != null ? `[${commitHash}](${commitUrl})` : commitHash;
+    newVersionMarkdown += `${commitLink}\n`;
   }
 
   return newVersionMarkdown;
@@ -67,13 +108,14 @@ function prepareVersionChangelog(
  * @param isInteractive
  * @param oldVersion
  * @param newVersion
- * @param githubRepo
+ * @param gitRepo
  */
 export async function updateChangelog(
   isInteractive: boolean,
   oldVersion: string,
   newVersion: string,
-  githubRepo: CinnabarMetaRepo,
+  gitRepo: CinnabarMetaRepo | null,
+  versionComment?: string,
 ) {
   const changelogPath = path.join(process.cwd(), "CHANGELOG.md");
   const changelogExists = fs.existsSync(changelogPath);
@@ -91,22 +133,25 @@ Visit the link above to see all unreleased changes.
 
 ${COMMENT_LINE}
 
-[unreleased]: https://github.com/${githubRepo.value}/compare/HEAD...HEAD
+[unreleased]: ${getCompareUrl(gitRepo)}
 `;
     fs.writeFileSync(changelogPath, changelogContent);
   } else {
     changelogContent = fs.readFileSync(changelogPath, "utf8");
   }
 
-  const versionComment = isInteractive
-    ? await promptText("Enter version summary")
-    : null;
+  const newVersionComment =
+    versionComment != null
+      ? versionComment
+      : isInteractive
+        ? await promptText("Enter version summary")
+        : null;
 
   const newVersionMarkdown = prepareVersionChangelog(
-    githubRepo,
+    gitRepo,
     oldVersion,
     newVersion,
-    versionComment,
+    newVersionComment,
   );
 
   changelogContent = changelogContent.replace(
@@ -136,4 +181,6 @@ ${COMMENT_LINE}
 export function writeChangelog(version: string, changelog: string) {
   fs.mkdirSync("tmp", { recursive: true });
   fs.writeFileSync(`tmp/CHANGELOG-${version}.md`, changelog);
+  fs.writeFileSync("tmp/CHANGELOG-latest.md", changelog);
+  fs.writeFileSync("tmp/version", version);
 }
