@@ -8,6 +8,34 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.4.0](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.0) — 2025-01-15
+
+This update brings improvements for a non-interactive mode. Now we can update from 'update.cinnabarmeta' file in repo's root: first line is type of update (patch, minor, ...) and the other lines for the update description.
+
+Full list:
+
+- apply biomejs recommendations ([a7faf6e])
+- comply anca ([2e620c2], [a67eb02])
+- fix changelog for gitea ([2091982])
+- fix getGitLog to hide merge messages ([1988b3c])
+- fix interactive actions in non-interactive mode ([8c23220])
+- fix version comment with file option ([cf26eee])
+- remove pre-commit ([3743d25])
+- switch to biomejs ([cfe9ba0])
+- update npm packages ([3743d25], [2e620c2], [888ede5])
+
+[cf26eee]: https://github.com/cinnabar-forge/node-meta/commit/cf26eee
+[1988b3c]: https://github.com/cinnabar-forge/node-meta/commit/1988b3c
+[2091982]: https://github.com/cinnabar-forge/node-meta/commit/2091982
+[8c23220]: https://github.com/cinnabar-forge/node-meta/commit/8c23220
+[a7faf6e]: https://github.com/cinnabar-forge/node-meta/commit/a7faf6e
+[3743d25]: https://github.com/cinnabar-forge/node-meta/commit/3743d25
+[cfe9ba0]: https://github.com/cinnabar-forge/node-meta/commit/cfe9ba0
+[2e620c2]: https://github.com/cinnabar-forge/node-meta/commit/2e620c2
+[888ede5]: https://github.com/cinnabar-forge/node-meta/commit/888ede5
+[a67eb02]: https://github.com/cinnabar-forge/node-meta/commit/a67eb02
+
+
 ## [0.3.1](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.3.1) — 2024-07-23
 
 - fix prepareVersionChangelog for non-tagged repos ([1022a9e])
@@ -70,4 +98,4 @@ Full list:
 [935ae0d]: https://github.com/cinnabar-forge/node-meta/commit/935ae0d
 
 
-[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.3.1...HEAD
+[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.0...HEAD
