@@ -9,7 +9,7 @@ import type { CinnabarMetaGitLogItem } from "./types.js";
 export function getGitLog(tagOrCommit?: string): CinnabarMetaGitLogItem[] {
   try {
     const log = execSync(
-      `git log ${tagOrCommit ? `${tagOrCommit}..HEAD ` : ""}--pretty=format:'%H%n%B'`,
+      `git log ${tagOrCommit ? `${tagOrCommit}..HEAD ` : ""}--pretty=format:'%H%n%B' --no-merges`,
     ).toString();
     return log.split("\n\n").map((line) => {
       const [hash, ...message] = line.split("\n");
