@@ -80,7 +80,10 @@ function prepareVersionChangelog(
 
   let fullListMarkdown = "";
   for (const [message, hashes] of sortedChanges) {
-    fullListMarkdown += `- ${message} ([${hashes.sort().join("], [")}])\n`;
+    fullListMarkdown +=
+      gitRepo?.type === "gitea"
+        ? `- ${message} (${hashes.join(", ")})\n`
+        : `- ${message} ([${hashes.join("], [")}])\n`;
   }
 
   const releaseDate = new Date().toISOString().split("T")[0];
@@ -92,12 +95,14 @@ function prepareVersionChangelog(
   let newVersionMarkdown = `## ${releaseLink} — ${releaseDate}${versionComment && versionComment.length > 0 ? `\n\n${versionComment}` : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? `\n\n${versionComment && versionComment.length > 0 ? "Full list:\n\n" : ""}${fullListMarkdown}` : ""}
 `;
 
-  for (const log of gitLogs) {
-    const commitHash = log.hash.slice(0, 7);
-    const commitUrl = getCommitUrl(gitRepo, commitHash);
-    const commitLink =
-      commitUrl != null ? `[${commitHash}](${commitUrl})` : commitHash;
-    newVersionMarkdown += `${commitLink}\n`;
+  if (gitRepo?.type !== "gitea") {
+    for (const log of gitLogs) {
+      const commitHash = log.hash.slice(0, 7);
+      const commitUrl = getCommitUrl(gitRepo, commitHash);
+      const commitLink =
+        commitUrl != null ? `[${commitHash}](${commitUrl})` : commitHash;
+      newVersionMarkdown += `${commitLink}\n`;
+    }
   }
 
   return newVersionMarkdown;
