@@ -8,6 +8,20 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.4.1](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.1) — 2025-01-16
+
+- add cinnabar-meta actions ([deaebeb])
+- add disableChangelogCheck and disableLinks settings ([a3a9b40])
+- add pull request list parsing from .cinnabar-meta-pull-requests.md ([a3a9b40])
+- fix format ([cf96aca])
+- update ([ea8ebe8])
+
+[deaebeb](https://github.com/cinnabar-forge/node-meta/commit/deaebeb)
+[ea8ebe8](https://github.com/cinnabar-forge/node-meta/commit/ea8ebe8)
+[cf96aca](https://github.com/cinnabar-forge/node-meta/commit/cf96aca)
+[a3a9b40](https://github.com/cinnabar-forge/node-meta/commit/a3a9b40)
+
+
 ## [0.4.0](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.0) — 2025-01-15
 
 This update brings improvements for a non-interactive mode. Now we can update from 'update.cinnabarmeta' file in repo's root: first line is type of update (patch, minor, ...) and the other lines for the update description.
@@ -98,4 +112,4 @@ Full list:
 [935ae0d]: https://github.com/cinnabar-forge/node-meta/commit/935ae0d
 
 
-[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.0...HEAD
+[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.1...HEAD
