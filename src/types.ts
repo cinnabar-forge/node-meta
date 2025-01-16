@@ -1,5 +1,7 @@
 export interface CinnabarMeta {
   dataVersion: number;
+  disableChangelogCheck?: boolean;
+  disableLinks?: boolean;
   files?: CinnabarMetaFile[];
   repo?: CinnabarMetaRepo;
   updateChangelog?: boolean;

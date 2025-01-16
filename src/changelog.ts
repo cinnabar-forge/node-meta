@@ -49,12 +49,14 @@ function getCompareUrl(gitRepo: CinnabarMetaRepo | null) {
  * @param gitRepo
  * @param oldVersion
  * @param newVersion
+ * @param disableLinks
  * @param versionComment
  */
-function prepareVersionChangelog(
+function prepareCommitVersionChangelog(
   gitRepo: CinnabarMetaRepo | null,
   oldVersion: string,
   newVersion: string,
+  disableLinks: boolean,
   versionComment: null | string,
 ) {
   const lastTag = getMostRecentGitTag();
@@ -80,10 +82,9 @@ function prepareVersionChangelog(
 
   let fullListMarkdown = "";
   for (const [message, hashes] of sortedChanges) {
-    fullListMarkdown +=
-      gitRepo?.type === "gitea"
-        ? `- ${message} (${hashes.join(", ")})\n`
-        : `- ${message} ([${hashes.join("], [")}])\n`;
+    fullListMarkdown += disableLinks
+      ? `- ${message} (${hashes.join(", ")})\n`
+      : `- ${message} ([${hashes.join("], [")}])\n`;
   }
 
   const releaseDate = new Date().toISOString().split("T")[0];
@@ -92,10 +93,12 @@ function prepareVersionChangelog(
   const releaseLink =
     releaseUrl != null ? `[${newVersion}](${releaseUrl})` : newVersion;
 
-  let newVersionMarkdown = `## ${releaseLink} — ${releaseDate}${versionComment && versionComment.length > 0 ? `\n\n${versionComment}` : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? `\n\n${versionComment && versionComment.length > 0 ? "Full list:\n\n" : ""}${fullListMarkdown}` : ""}
+  const releaseDateHeader = `## ${releaseLink} — ${releaseDate}\n\n`;
+
+  let newVersionMarkdown = `${versionComment && versionComment.length > 0 ? versionComment : ""}${fullListMarkdown && fullListMarkdown.length > 0 ? `${versionComment && versionComment.length > 0 ? "Full list:\n\n" : ""}${fullListMarkdown}` : ""}
 `;
 
-  if (gitRepo?.type !== "gitea") {
+  if (!disableLinks) {
     for (const log of gitLogs) {
       const commitHash = log.hash.slice(0, 7);
       const commitUrl = getCommitUrl(gitRepo, commitHash);
@@ -105,7 +108,7 @@ function prepareVersionChangelog(
     }
   }
 
-  return newVersionMarkdown;
+  return { version: newVersionMarkdown, header: releaseDateHeader };
 }
 
 /**
@@ -114,12 +117,15 @@ function prepareVersionChangelog(
  * @param oldVersion
  * @param newVersion
  * @param gitRepo
+ * @param disableLinks
  */
 export async function updateChangelog(
   isInteractive: boolean,
   oldVersion: string,
   newVersion: string,
   gitRepo: CinnabarMetaRepo | null,
+  disableChangelogCheck: boolean,
+  disableLinks: boolean,
   versionComment?: string,
 ) {
   const changelogPath = path.join(process.cwd(), "CHANGELOG.md");
@@ -152,17 +158,41 @@ ${COMMENT_LINE}
         ? await promptText("Enter version summary")
         : null;
 
-  const newVersionMarkdown = prepareVersionChangelog(
-    gitRepo,
-    oldVersion,
-    newVersion,
-    newVersionComment,
+  const pullRequestsPath = path.join(
+    process.cwd(),
+    ".cinnabar-meta-pull-requests.md",
   );
+  const pullRequestsExists = fs.existsSync(pullRequestsPath);
 
-  changelogContent = changelogContent.replace(
-    COMMENT_LINE,
-    `${COMMENT_LINE}\n\n${newVersionMarkdown}`,
-  );
+  const pullRequests = fs.readFileSync(pullRequestsPath, "utf8");
+
+  let versionResult: string;
+
+  if (!disableChangelogCheck && pullRequestsExists && pullRequests?.length > 0) {
+    changelogContent = changelogContent.replace(
+      COMMENT_LINE,
+      `${COMMENT_LINE}\n\n${newVersionComment && newVersionComment.length > 0 ? `${newVersionComment}\n\n` : ""}${pullRequests}`,
+    );
+
+    versionResult = pullRequests;
+
+    fs.rmSync(pullRequestsPath);
+  } else {
+    const markdowns = prepareCommitVersionChangelog(
+      gitRepo,
+      oldVersion,
+      newVersion,
+      disableLinks,
+      newVersionComment,
+    );
+
+    changelogContent = changelogContent.replace(
+      COMMENT_LINE,
+      `${COMMENT_LINE}\n\n${markdowns.header}${markdowns.version}`,
+    );
+
+    versionResult = markdowns.version;
+  }
 
   const unreleasedLinkRegex = /compare\/(.+?)\.\.\.HEAD/;
   const unreleasedLinkMatch = changelogContent.match(unreleasedLinkRegex);
@@ -175,7 +205,7 @@ ${COMMENT_LINE}
 
   fs.writeFileSync(changelogPath, changelogContent);
 
-  return newVersionMarkdown;
+  return versionResult;
 }
 
 /**

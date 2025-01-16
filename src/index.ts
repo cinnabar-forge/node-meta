@@ -216,6 +216,8 @@ async function main() {
       oldVersion,
       newVersion,
       gitRepo,
+      !!metaData?.disableChangelogCheck,
+      !!metaData?.disableLinks,
       versionComment,
     );
 
