@@ -168,7 +168,11 @@ ${COMMENT_LINE}
 
   let versionResult: string;
 
-  if (!disableChangelogCheck && pullRequestsExists && pullRequests?.length > 0) {
+  if (
+    !disableChangelogCheck &&
+    pullRequestsExists &&
+    pullRequests?.length > 0
+  ) {
     changelogContent = changelogContent.replace(
       COMMENT_LINE,
       `${COMMENT_LINE}\n\n${newVersionComment && newVersionComment.length > 0 ? `${newVersionComment}\n\n` : ""}${pullRequests}`,
