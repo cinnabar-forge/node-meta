@@ -8,6 +8,13 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.4.2](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.2) — 2025-01-18
+
+- fix commit links ([253b6fe])
+
+[253b6fe](https://github.com/cinnabar-forge/node-meta/commit/253b6fe)
+
+
 ## [0.4.1](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.1) — 2025-01-16
 
 - add cinnabar-meta actions ([deaebeb])
@@ -112,4 +119,4 @@ Full list:
 [935ae0d]: https://github.com/cinnabar-forge/node-meta/commit/935ae0d
 
 
-[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.1...HEAD
+[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.2...HEAD
