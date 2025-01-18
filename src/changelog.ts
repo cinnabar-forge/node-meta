@@ -102,9 +102,10 @@ function prepareCommitVersionChangelog(
     for (const log of gitLogs) {
       const commitHash = log.hash.slice(0, 7);
       const commitUrl = getCommitUrl(gitRepo, commitHash);
-      const commitLink =
-        commitUrl != null ? `[${commitHash}](${commitUrl})` : commitHash;
-      newVersionMarkdown += `${commitLink}\n`;
+      if (commitUrl != null) {
+        const commitLink = `[${commitHash}]: ${commitUrl}`;
+        newVersionMarkdown += `${commitLink}\n`;
+      }
     }
   }
 

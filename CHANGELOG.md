@@ -16,10 +16,10 @@ Visit the link above to see all unreleased changes.
 - fix format ([cf96aca])
 - update ([ea8ebe8])
 
-[deaebeb](https://github.com/cinnabar-forge/node-meta/commit/deaebeb)
-[ea8ebe8](https://github.com/cinnabar-forge/node-meta/commit/ea8ebe8)
-[cf96aca](https://github.com/cinnabar-forge/node-meta/commit/cf96aca)
-[a3a9b40](https://github.com/cinnabar-forge/node-meta/commit/a3a9b40)
+[deaebeb]: https://github.com/cinnabar-forge/node-meta/commit/deaebeb
+[ea8ebe8]: https://github.com/cinnabar-forge/node-meta/commit/ea8ebe8
+[cf96aca]: https://github.com/cinnabar-forge/node-meta/commit/cf96aca
+[a3a9b40]: https://github.com/cinnabar-forge/node-meta/commit/a3a9b40
 
 
 ## [0.4.0](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.0) — 2025-01-15
