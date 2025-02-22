@@ -8,6 +8,15 @@ Visit the link above to see all unreleased changes.
 
 [comment]: # (Insert new version after this line)
 
+## [0.4.3](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.3) — 2025-02-22
+
+- chore ([9bd0399])
+- fix pull request changelog ([1cb4d25])
+
+[1cb4d25]: https://github.com/cinnabar-forge/node-meta/commit/1cb4d25
+[9bd0399]: https://github.com/cinnabar-forge/node-meta/commit/9bd0399
+
+
 ## [0.4.2](https://github.com/cinnabar-forge/node-meta/releases/tag/v0.4.2) — 2025-01-18
 
 - fix commit links ([253b6fe])
@@ -119,4 +128,4 @@ Full list:
 [935ae0d]: https://github.com/cinnabar-forge/node-meta/commit/935ae0d
 
 
-[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.2...HEAD
+[unreleased]: https://github.com/cinnabar-forge/node-meta/compare/v0.4.3...HEAD
