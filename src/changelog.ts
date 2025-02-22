@@ -112,6 +112,21 @@ function prepareCommitVersionChangelog(
   return { version: newVersionMarkdown, header: releaseDateHeader };
 }
 
+function preparePullRequestChangelog(
+  gitRepo: CinnabarMetaRepo | null,
+  newVersion: string,
+) {
+  const releaseDate = new Date().toISOString().split("T")[0];
+
+  const releaseUrl = getReleaseUrl(gitRepo, newVersion);
+  const releaseLink =
+    releaseUrl != null ? `[${newVersion}](${releaseUrl})` : newVersion;
+
+  const header = `## ${releaseLink} — ${releaseDate}\n\n`;
+
+  return { header };
+}
+
 /**
  * Updates the changelog with the latest changes
  * @param isInteractive
@@ -174,9 +189,11 @@ ${COMMENT_LINE}
     pullRequestsExists &&
     pullRequests?.length > 0
   ) {
+    const markdowns = preparePullRequestChangelog(gitRepo, newVersion);
+
     changelogContent = changelogContent.replace(
       COMMENT_LINE,
-      `${COMMENT_LINE}\n\n${newVersionComment && newVersionComment.length > 0 ? `${newVersionComment}\n\n` : ""}${pullRequests}`,
+      `${COMMENT_LINE}\n\n${markdowns.header}${pullRequests}`,
     );
 
     versionResult = pullRequests;
